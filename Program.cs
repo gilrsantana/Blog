@@ -44,6 +44,9 @@ void ConfigureAuthentication(WebApplicationBuilder wab)
 
 void ConfigureMvc(WebApplicationBuilder wab)
 {
+    wab.Services.AddMemoryCache();
+    // Adiciona dados em cahce para economizar acessos ao banco
+
     wab
         .Services
         .AddControllers()
@@ -65,18 +68,18 @@ void ConfigureMvc(WebApplicationBuilder wab)
 void ConfigureServices(WebApplicationBuilder wab)
 {
     wab.Services.AddDbContext<BlogDataContext>();
-// Adiciona o serviço de DbContext na aplicação
+    // Adiciona o serviço de DbContext na aplicação
 
     wab.Services.AddTransient<TokenService>();
     wab.Services.AddTransient<EmailService>();
-// Transient - O tempo de vida da entidade é o tempo da requsição.
-// Se na mesma reauisição for chamado mais de uma vez, ele será reaproveitado
+    // Transient - O tempo de vida da entidade é o tempo da requsição.
+    // Se na mesma reauisição for chamado mais de uma vez, ele será reaproveitado
 
-// builder.Services.AddScoped<>();
-// Scoped O tempo de vida da entidade é o mais curto. A cada chamada cria um novo
+    // builder.Services.AddScoped<>();
+    // Scoped O tempo de vida da entidade é o mais curto. A cada chamada cria um novo
 
-// builder.Services.AddSingleton<>();
-// // O tempo de vida da entidade dura toda a vida da aplicação
+    // builder.Services.AddSingleton<>();
+    // O tempo de vida da entidade dura toda a vida da aplicação
 }
 
 void LoadConfiguration(WebApplication wapp)
