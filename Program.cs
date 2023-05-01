@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Blog;
 using Blog.Data;
 using Blog.Services;
@@ -49,8 +50,16 @@ void ConfigureMvc(WebApplicationBuilder wab)
         .ConfigureApiBehaviorOptions(options =>
         {
             options.SuppressModelStateInvalidFilter = true;
+        })
+        .AddJsonOptions(x =>
+        {
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
         });
-// SuppressModelStateInvalidFilter - Suprime a validação e envio de mensagem pelo próprio ASP.NET, pois nós estamos fazendo este tratamento.
+    // SuppressModelStateInvalidFilter - Suprime a validação e envio de mensagem pelo próprio ASP.NET,
+    // pois nós estamos fazendo este tratamento.
+    // AddJsonOptions ReferenceHandler.IgnoreCycles - Trata os casos de referência cíclica entre entidades evitando loop.
+    // AddJsonOptions JsonIgnoreCondition.WhenWritingDefault - Não carrega os objetos quando forem null.
 }
 
 void ConfigureServices(WebApplicationBuilder wab)
