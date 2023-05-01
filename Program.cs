@@ -14,6 +14,7 @@ var app = builder.Build();
 LoadConfiguration(app);
 app.UseAuthentication(); // Primeiro a autenticação - Quêm você é.
 app.UseAuthorization(); // Depois a autorização - O que pode fazer.
+app.UseStaticFiles();
 app.MapControllers();
 app.Run();
 
@@ -58,6 +59,7 @@ void ConfigureServices(WebApplicationBuilder wab)
 // Adiciona o serviço de DbContext na aplicação
 
     wab.Services.AddTransient<TokenService>();
+    wab.Services.AddTransient<EmailService>();
 // Transient - O tempo de vida da entidade é o tempo da requsição.
 // Se na mesma reauisição for chamado mais de uma vez, ele será reaproveitado
 
