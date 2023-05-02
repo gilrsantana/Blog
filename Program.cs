@@ -4,6 +4,7 @@ using Blog;
 using Blog.Data;
 using Blog.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +12,28 @@ ConfigureAuthentication(builder);
 ConfigureMvc(builder);
 ConfigureServices(builder);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 LoadConfiguration(app);
+
+app.UseHttpsRedirection();// HTTPS
 app.UseAuthentication(); // Primeiro a autenticação - Quêm você é.
 app.UseAuthorization(); // Depois a autorização - O que pode fazer.
 app.UseStaticFiles();
 app.MapControllers();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+if (app.Environment.IsDevelopment())
+{
+    
+}
+    
+
 app.Run();
 
 void ConfigureAuthentication(WebApplicationBuilder wab)
@@ -67,7 +84,11 @@ void ConfigureMvc(WebApplicationBuilder wab)
 
 void ConfigureServices(WebApplicationBuilder wab)
 {
-    wab.Services.AddDbContext<BlogDataContext>();
+    var connectionString = wab.Configuration.GetConnectionString("DefaultConnection");
+    wab.Services.AddDbContext<BlogDataContext>(options =>
+    {
+        options.UseSqlServer(connectionString);
+    });
     // Adiciona o serviço de DbContext na aplicação
 
     wab.Services.AddTransient<TokenService>();
@@ -84,6 +105,7 @@ void ConfigureServices(WebApplicationBuilder wab)
 
 void LoadConfiguration(WebApplication wapp)
 {
+    
     Configuration.JwtKey = wapp.Configuration.GetValue<string>("JwtKey") ?? ""; 
     Configuration.ApiKeyName = wapp.Configuration.GetValue<string>("ApiKeyName") ?? ""; 
     Configuration.ApiKey = wapp.Configuration.GetValue<string>("ApiKey") ?? ""; 
