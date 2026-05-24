@@ -22,6 +22,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Create environment.ts
+        run: |
+          mkdir -p src/environments
+          echo "export const environment = { production: true, adminEmailHash: '${{ secrets.ADMIN_EMAIL_HASH }}', adminPasswordHash: '${{ secrets.ADMIN_PASSWORD_HASH }}' };" > src/environments/environment.ts
+
       - name: Build Application
         run: npm run build
 
