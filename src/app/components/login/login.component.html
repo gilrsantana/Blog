@@ -1,0 +1,65 @@
+<div class="login-page">
+  <div class="login-card glass animate-fade-in">
+    <div class="login-header">
+      <div class="logo-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="currentColor">
+          <path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z"/>
+        </svg>
+      </div>
+      <h1>Área Administrativa</h1>
+      <p class="subtitle">Identifique-se para gerenciar o blog</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <div class="input-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280 320-200v-80L480-520 160-720v80l320 200Z"/>
+          </svg>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            placeholder="Ex: gilmar@email.com" 
+            autocomplete="username"
+          />
+        </div>
+        <div class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">
+          O e-mail é obrigatório.
+        </div>
+        <div class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">
+          Insira um e-mail válido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <div class="input-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280Zm-160-360h320v-80q0-66-47-113t-113-47q-66 0-113 47t-47 113v80ZM240-160v-400 400Z"/>
+          </svg>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Sua senha secreta" 
+            autocomplete="current-password"
+          />
+        </div>
+        <div class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+          A senha é obrigatória.
+        </div>
+      </div>
+
+      <div class="general-error" *ngIf="generalError()">
+        {{ generalError() }}
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid || isLoading()" class="btn btn-primary login-btn">
+        <span *ngIf="!isLoading()">Entrar</span>
+        <span *ngIf="isLoading()" class="loading-spinner"></span>
+      </button>
+    </form>
+  </div>
+</div>

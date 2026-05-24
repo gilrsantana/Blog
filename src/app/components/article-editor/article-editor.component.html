@@ -1,0 +1,158 @@
+<div class="editor-container animate-fade-in">
+  <div class="editor-header" *ngIf="!generatedCode()">
+    <a [routerLink]="['/admin']" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+        <path d="M360-240 120-480l240-240 56 56-144 144h568v80H272l144 144-56 56Z"/>
+      </svg>
+      Voltar para o Painel
+    </a>
+    <h1>{{ isEditMode() ? 'Editar Artigo' : 'Escrever Novo Artigo' }}</h1>
+    <p class="subtitle">Insira os metadados e o conteúdo em Markdown para gerar os arquivos estáticos.</p>
+  </div>
+
+  <!-- Formulário do Editor -->
+  <form [formGroup]="editorForm" (ngSubmit)="onSubmit()" class="editor-form" *ngIf="!isLoading() && !generatedCode(); else loadingOrCodeTemplate">
+    <div class="main-form-panel glass">
+      <div class="form-row">
+        <div class="form-group col-8">
+          <label for="title">Título do Artigo *</label>
+          <input type="text" id="title" formControlName="title" placeholder="Ex: Introdução ao Angular 21 e Signals" />
+          <div class="error-msg" *ngIf="editorForm.get('title')?.touched && editorForm.get('title')?.errors?.['required']">
+            O título é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group col-4">
+          <label for="readingTime">Tempo de Leitura (minutos)</label>
+          <input type="number" id="readingTime" formControlName="readingTime" min="0" placeholder="Deixe 0 para auto-calcular" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="slug">URL Slug *</label>
+        <div class="slug-input-wrapper">
+          <span class="slug-prefix">devblog.com/article/</span>
+          <input type="text" id="slug" formControlName="slug" placeholder="ex-slug-do-artigo" />
+        </div>
+        <div class="error-msg" *ngIf="editorForm.get('slug')?.touched && editorForm.get('slug')?.errors?.['required']">
+          O slug é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="summary">Resumo do Artigo *</label>
+        <textarea id="summary" formControlName="summary" rows="3" placeholder="Uma breve descrição que aparecerá nos cards da página inicial..."></textarea>
+        <div class="error-msg" *ngIf="editorForm.get('summary')?.touched && editorForm.get('summary')?.errors?.['required']">
+          O resumo é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-6">
+          <label for="tags">Tags (separadas por vírgula)</label>
+          <input type="text" id="tags" formControlName="tags" placeholder="Ex: Angular, Web, TypeScript" />
+        </div>
+
+        <div class="form-group col-6">
+          <label for="coverImage">URL da Imagem de Capa</label>
+          <input type="text" id="coverImage" formControlName="coverImage" placeholder="https://images.unsplash.com/photo-..." />
+        </div>
+      </div>
+
+      <!-- Capa Preview -->
+      <div class="cover-preview" *ngIf="editorForm.get('coverImage')?.value">
+        <span class="preview-label">Pré-visualização da Capa:</span>
+        <img [src]="editorForm.get('coverImage')?.value" alt="Cover Preview" (error)="onCoverError($event)" />
+      </div>
+
+      <!-- Área de Editor + Preview Markdown -->
+      <div class="content-editor-section">
+        <div class="editor-tabs">
+          <button type="button" class="tab-btn" [class.active]="activeTab() === 'write'" (click)="setTab('write')">
+            Escrever
+          </button>
+          <button type="button" class="tab-btn" [class.active]="activeTab() === 'preview'" (click)="setTab('preview')">
+            Visualizar
+          </button>
+        </div>
+
+        <div class="tab-content">
+          <div [hidden]="activeTab() !== 'write'" class="write-tab">
+            <textarea formControlName="content" placeholder="Escreva seu artigo aqui em formato Markdown... (Dica: use # para títulos, ``` para blocos de código e ** para negrito)"></textarea>
+            <div class="error-msg" *ngIf="editorForm.get('content')?.touched && editorForm.get('content')?.errors?.['required']">
+              O conteúdo é obrigatório.
+            </div>
+          </div>
+
+          <div class="preview-tab article-markdown" *ngIf="activeTab() === 'preview'" [innerHTML]="previewHtml()"></div>
+        </div>
+      </div>
+
+      <div class="form-group publish-toggle">
+        <label class="toggle-container">
+          <input type="checkbox" formControlName="isPublished" />
+          <span class="toggle-slider"></span>
+          <span class="toggle-text">Publicar artigo imediatamente (Marcar como Publicado)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button type="button" [routerLink]="['/admin']" class="btn btn-secondary">Cancelar</button>
+      <button type="submit" [disabled]="editorForm.invalid" class="btn btn-primary">
+        Gerar Arquivos do Post
+      </button>
+    </div>
+  </form>
+
+  <!-- Template do Código Gerado / Loading -->
+  <ng-template #loadingOrCodeTemplate>
+    <div class="loading-panel glass" *ngIf="isLoading()">
+      <div class="loading-spinner"></div>
+      <p>Buscando dados do artigo...</p>
+    </div>
+
+    <!-- Seção do Código Gerado para Cópia -->
+    <div class="code-generator-panel animate-fade-in" *ngIf="generatedCode()">
+      <div class="generator-header">
+        <h2>🎉 Artigo Gerado com Sucesso!</h2>
+        <p>Como estamos em uma arquitetura estática (sem backend dinâmico), você só precisa adicionar esses dados ao seu código:</p>
+      </div>
+
+      <div class="generator-step glass">
+        <div class="step-num">Passo 1</div>
+        <div class="step-desc">
+          <h3>Adicionar Metadados</h3>
+          <p>Adicione este objeto JSON ao final da lista no arquivo: <code class="file-path">public/articles/articles.json</code></p>
+        </div>
+        <div class="code-view-box">
+          <div class="code-header">
+            <span>articles.json (Metadados do Artigo)</span>
+            <button (click)="copyText(generatedCode()!.json)" class="btn-copy">Copiar JSON</button>
+          </div>
+          <pre><code>{{ generatedCode()!.json }}</code></pre>
+        </div>
+      </div>
+
+      <div class="generator-step glass">
+        <div class="step-num">Passo 2</div>
+        <div class="step-desc">
+          <h3>Criar Arquivo Markdown</h3>
+          <p>Crie um arquivo com o nome <code class="file-name">{{ generatedCode()!.fileName }}</code> no diretório: <code class="file-path">public/articles/</code> e cole o código abaixo:</p>
+        </div>
+        <div class="code-view-box">
+          <div class="code-header">
+            <span>{{ generatedCode()!.fileName }} (Conteúdo do Artigo)</span>
+            <button (click)="copyText(generatedCode()!.markdown)" class="btn-copy">Copiar Markdown</button>
+          </div>
+          <pre><code>{{ generatedCode()!.markdown }}</code></pre>
+        </div>
+      </div>
+
+      <div class="generator-footer">
+        <button (click)="generatedCode.set(null)" class="btn btn-secondary">Voltar a Editar</button>
+        <button [routerLink]="['/admin']" class="btn btn-primary">Concluído</button>
+      </div>
+    </div>
+  </ng-template>
+</div>

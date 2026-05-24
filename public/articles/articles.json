@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Introdução ao Angular 21 e Signals",
+    "slug": "introducao-ao-angular-21-e-signals",
+    "summary": "Aprenda como os Angular Signals estão revolucionando a reatividade e a gerência de estado no ecossistema Angular 21, proporcionando maior performance e código mais limpo.",
+    "tags": "Angular, Web, JavaScript",
+    "coverImage": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80",
+    "readingTime": 5,
+    "createdAt": "2026-05-14T12:00:00Z",
+    "fileName": "introducao-ao-angular-21-e-signals.md",
+    "isPublished": true
+  },
+  {
+    "id": 2,
+    "title": "Construindo APIs Robustas com .NET 8",
+    "slug": "construindo-apis-robustas-com-net-8",
+    "summary": "Um guia prático sobre como configurar, organizar e estruturar uma API REST segura e de alta performance utilizando .NET 8, ASP.NET Core e Entity Framework Core.",
+    "tags": "C#, .NET, Web API, Backend",
+    "coverImage": "https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800&q=80",
+    "readingTime": 7,
+    "createdAt": "2026-05-19T14:30:00Z",
+    "fileName": "construindo-apis-robustas-com-net-8.md",
+    "isPublished": true
+  },
+  {
+    "id": 3,
+    "title": "OKLCH: A Nova Era de Cores no CSS Moderno",
+    "slug": "oklch-a-nova-era-de-cores-no-css-moderno",
+    "summary": "Descubra como o espaço de cores OKLCH facilita o design system, permitindo criar paletas de cores mais consistentes e vibrantes diretamente no CSS sem depender de pré-processadores.",
+    "tags": "CSS, Design, FrontEnd, Web Design",
+    "coverImage": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&q=80",
+    "readingTime": 4,
+    "createdAt": "2026-05-22T09:15:00Z",
+    "fileName": "oklch-a-nova-era-de-cores-no-css-moderno.md",
+    "isPublished": true
+  }
+]

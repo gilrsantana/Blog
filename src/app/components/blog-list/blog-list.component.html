@@ -1,0 +1,67 @@
+<section class="hero animate-fade-in">
+  <div class="hero-content">
+    <span class="hero-badge">Tecnologia & Desenvolvimento</span>
+    <h1>Explorando o futuro do desenvolvimento web.</h1>
+    <p>Artigos semanais sobre Angular, .NET, CSS moderno, arquitetura de software e as melhores práticas do mercado.</p>
+  </div>
+</section>
+
+<div class="filter-bar animate-fade-in">
+  <div class="search-box">
+    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+      <path d="M784-120 533-371q-30 24-74 37.5T370-320q-109 0-184.5-75.5T110-580q0-109 75.5-184.5T370-840q109 0 184.5 75.5T630-580q0 45-13.5 89T579-417l251 251-56 56ZM370-400q75 0 127.5-52.5T550-580q0-75-52.5-127.5T370-760q-75 0-127.5 52.5T190-580q0 75 52.5 127.5T370-400Z"/>
+    </svg>
+    <input type="text" placeholder="Buscar artigos..." [ngModel]="searchQuery()" (ngModelChange)="onSearchChange($event)" />
+  </div>
+  <div class="tag-filters" *ngIf="tags().length > 0">
+    <button class="tag-pill" [class.active]="selectedTag() === ''" (click)="filterByTag('')">Todos</button>
+    <button *ngFor="let tag of tags()" class="tag-pill" [class.active]="selectedTag() === tag" (click)="filterByTag(tag)">{{ tag }}</button>
+  </div>
+</div>
+
+<div class="articles-grid animate-fade-in" *ngIf="!isLoading(); else loadingTemplate">
+  <article class="article-card glass" *ngFor="let article of articles()" [routerLink]="['/article', article.slug]">
+    <div class="card-image-wrapper">
+      <img [src]="article.coverImage || 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=600'" alt="Cover Image" />
+      <div class="card-badge" *ngIf="article.tags">{{ article.tags.split(',')[0] }}</div>
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span>{{ article.createdAt | date:'dd MMM yyyy' }}</span>
+        <span class="meta-dot"></span>
+        <span>{{ article.readingTime }} min de leitura</span>
+      </div>
+      <h3 class="card-title">{{ article.title }}</h3>
+      <p class="card-summary">{{ article.summary }}</p>
+      <div class="card-footer">
+        <span class="read-more">
+          Ler artigo
+          <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
+            <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+
+<div class="empty-state glass animate-fade-in" *ngIf="!isLoading() && articles().length === 0">
+  <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="currentColor">
+    <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+  </svg>
+  <h3>Nenhum artigo encontrado</h3>
+  <p>Não encontramos artigos para os termos buscados ou filtros selecionados. Tente ajustar os termos ou tags.</p>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-grid">
+    <div class="skeleton-card glass" *ngFor="let item of [1, 2, 3]">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-content">
+        <div class="skeleton-line sm"></div>
+        <div class="skeleton-line md"></div>
+        <div class="skeleton-line lg"></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
