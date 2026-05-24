@@ -32,4 +32,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/frontend/browser/
-          server-dir: public_html/ # Ajuste para a pasta correta na HostGator (ex: public_html/blog)
+          server-dir: ./
