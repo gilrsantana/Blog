@@ -1,7 +1,11 @@
-name: Deploy to HostGator
+name: Deploy Application
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ secrets.GCP_REGION }}
+  GCP_SERVICE_NAME: blog-api
+  GAR_LOCATION: ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
 on:
   push:
@@ -9,7 +13,8 @@ on:
       - production
 
 jobs:
-  build-and-deploy:
+  deploy-frontend:
+    name: Build & Deploy Frontend (HostGator)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -44,3 +49,42 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: frontend/dist/frontend/browser/
           server-dir: ./../
+
+  deploy-backend:
+    name: Build & Deploy Backend (Google Cloud Run)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Google Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GAR_LOCATION }} --quiet
+
+      - name: Build and Push Docker Container
+        run: |
+          IMAGE_TAG="${{ env.GAR_LOCATION }}/${{ env.GCP_PROJECT_ID }}/blog-repo/${{ env.GCP_SERVICE_NAME }}:${{ github.sha }}"
+          docker build -t $IMAGE_TAG -f backend/Dockerfile .
+          docker push $IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.GCP_SERVICE_NAME }}
+          region: ${{ env.GCP_REGION }}
+          image: ${{ env.GAR_LOCATION }}/${{ env.GCP_PROJECT_ID }}/blog-repo/${{ env.GCP_SERVICE_NAME }}:${{ github.sha }}
+          flags: '--allow-unauthenticated --port 8080'

@@ -54,3 +54,12 @@ A global exception middleware captures unhandled exceptions (e.g. database conne
 ### 4. Rich Domain Models
 Domain models protect their state with private/protected constructors. Instances can only be created via static factories that execute validation rules.
 If validations fail, they return a `Result<Entity>` with appropriate domain errors.
+
+---
+
+## Testing Strategy (xUnit & TDD)
+
+To ensure code reliability and adhere to Test-Driven Development (TDD) principles:
+- **Test Project**: A dedicated unit testing project (`Blog.UnitTests`) using **xUnit** is added to the solution.
+- **Scope**: Core logic in the Domain layer (`Blog.Domain`) and use cases in the Application layer (`Blog.Application`) must have complete test coverage.
+- **TDD Flow**: Each new function, action, or method must be preceded by a corresponding unit test to validate its behavior and outcomes.
