@@ -74,12 +74,14 @@ jobs:
         run: |
           gcloud auth configure-docker ${{ env.GAR_LOCATION }} --quiet
 
-      - name: Build and Push Docker Container
+      - name: Build, Containerize, and Push to Artifact Registry
         run: |
-          IMAGE_TAG="${{ env.GAR_LOCATION }}/${{ env.GCP_PROJECT_ID }}/blog-repo/${{ env.GCP_SERVICE_NAME }}:${{ github.sha }}"
-          docker build -t $IMAGE_TAG -f backend/Dockerfile .
-          docker push $IMAGE_TAG
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          dotnet publish backend/src/Blog.Presentation/Blog.Presentation.csproj \
+            -c Release \
+            -p:PublishProfile=DefaultContainer \
+            -p:ContainerRegistry=${{ env.GAR_LOCATION }} \
+            -p:ContainerRepository=${{ env.GCP_PROJECT_ID }}/blog-repo/${{ env.GCP_SERVICE_NAME }} \
+            -p:ContainerImageTag=${{ github.sha }}
 
       - name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
