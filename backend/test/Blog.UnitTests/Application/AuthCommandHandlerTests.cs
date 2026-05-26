@@ -3,7 +3,7 @@ using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Accounts.Commands;
 using Blog.Shared;
 
-namespace Blog.UnitTests;
+namespace Blog.UnitTests.Application;
 
 public class AuthCommandHandlerTests
 {

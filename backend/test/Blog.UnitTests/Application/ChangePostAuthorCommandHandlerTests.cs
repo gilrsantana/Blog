@@ -4,7 +4,7 @@ using Blog.Application.UseCases.Posts.Commands;
 using Blog.Domain.Entities;
 using Blog.Shared;
 
-namespace Blog.UnitTests;
+namespace Blog.UnitTests.Application;
 
 public class ChangePostAuthorCommandHandlerTests
 {

@@ -1,7 +1,7 @@
 using Xunit;
 using Blog.Shared;
 
-namespace Blog.UnitTests;
+namespace Blog.UnitTests.Shared;
 
 public class ResultTests
 {
