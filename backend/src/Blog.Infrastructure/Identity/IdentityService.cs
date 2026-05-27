@@ -7,10 +7,12 @@ namespace Blog.Infrastructure.Identity;
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<Account> _userManager;
+    private readonly RoleManager<Role> _roleManager;
 
-    public IdentityService(UserManager<Account> userManager)
+    public IdentityService(UserManager<Account> userManager, RoleManager<Role> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task<Result<TokenResponse>> LoginAsync(string email, string password)
@@ -44,6 +46,13 @@ public class IdentityService : IIdentityService
             var firstError = result.Errors.FirstOrDefault()?.Description ?? "Registration failed.";
             return Result.Failure(new Error("Auth.RegistrationFailed", firstError));
         }
+
+        var roleResult = await AssignRoleAsync(id, "Reader");
+        if (roleResult.IsFailure)
+        {
+            return roleResult;
+        }
+
         return Result.Success();
     }
 
@@ -86,6 +95,40 @@ public class IdentityService : IIdentityService
         {
             return Result.Failure(new Error("Auth.InactivationFailed", "Inactivation failed."));
         }
+        return Result.Success();
+    }
+
+    public async Task<Result> AssignRoleAsync(Guid accountId, string roleName)
+    {
+        var account = await _userManager.FindByIdAsync(accountId.ToString());
+        if (account == null)
+        {
+            return Result.Failure(new Error("Auth.AccountNotFound", "Account not found."));
+        }
+
+        var roleExists = await _roleManager.RoleExistsAsync(roleName);
+        if (!roleExists)
+        {
+            var newRole = Role.Create(roleName, $"{roleName} Role");
+            var createRoleResult = await _roleManager.CreateAsync(newRole);
+            if (!createRoleResult.Succeeded)
+            {
+                var firstError = createRoleResult.Errors.FirstOrDefault()?.Description ?? "Role creation failed.";
+                return Result.Failure(new Error("Auth.RoleCreationFailed", firstError));
+            }
+        }
+
+        var isInRole = await _userManager.IsInRoleAsync(account, roleName);
+        if (!isInRole)
+        {
+            var addToRoleResult = await _userManager.AddToRoleAsync(account, roleName);
+            if (!addToRoleResult.Succeeded)
+            {
+                var firstError = addToRoleResult.Errors.FirstOrDefault()?.Description ?? "Failed to assign role.";
+                return Result.Failure(new Error("Auth.RoleAssignmentFailed", firstError));
+            }
+        }
+
         return Result.Success();
     }
 }

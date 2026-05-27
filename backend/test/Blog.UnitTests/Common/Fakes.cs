@@ -87,11 +87,12 @@ public class FakeIdentityService : IIdentityService
         return Task.FromResult(Result.Success(new TokenResponse("new-access-token", "new-refresh-token")));
     }
 
-    public Task<Result> RegisterAsync(Guid id, string email, string password)
+    public async Task<Result> RegisterAsync(Guid id, string email, string password)
     {
         Users[email] = password;
         RegisteredIds.Add(id);
-        return Task.FromResult(Result.Success());
+        await AssignRoleAsync(id, "Reader");
+        return Result.Success();
     }
 
     public Task<Result> UpdatePasswordAsync(Guid accountId, string currentPassword, string newPassword) =>
@@ -102,4 +103,16 @@ public class FakeIdentityService : IIdentityService
 
     public Task<Result> InactivateAccountAsync(Guid accountId) =>
         Task.FromResult(Result.Success());
+
+    public Dictionary<Guid, List<string>> UserRoles { get; } = new();
+
+    public Task<Result> AssignRoleAsync(Guid accountId, string roleName)
+    {
+        if (!UserRoles.ContainsKey(accountId))
+        {
+            UserRoles[accountId] = new List<string>();
+        }
+        UserRoles[accountId].Add(roleName);
+        return Task.FromResult(Result.Success());
+    }
 }

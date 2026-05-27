@@ -1,6 +1,149 @@
-@Blog.Presentation_HostAddress = http://localhost:5000
+@Host = http://localhost:5000
+@AccountId = 3caef899-ee1b-4b13-a179-efca82c658cd
+@PostId = 12345678-1234-1234-1234-123456789abc
 
-GET {{Blog.Presentation_HostAddress}}/weatherforecast/
-Accept: application/json
+### UC1: Register New Account
+POST {{Host}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "email": "reader@email.com",
+  "password": "Password123!",
+  "displayName": "Reader User",
+  "bio": "I am a reader on the blog.",
+  "avatarUrl": "http://example.com/avatar.jpg"
+}
 
 ###
+
+### UC2: Login Account
+POST {{Host}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "reader@email.com",
+  "password": "Password123!"
+}
+
+###
+
+### Refresh Token
+POST {{Host}}/api/Auth/refresh
+Content-Type: application/json
+
+{
+  "accessToken": "dummy-access-token",
+  "refreshToken": "dummy-refresh-token"
+}
+
+###
+
+### UC9: Update User Profile
+PUT {{Host}}/api/Auth/profile
+Content-Type: application/json
+
+{
+  "userId": "{{AccountId}}",
+  "displayName": "Reader User Updated",
+  "bio": "Updated bio here.",
+  "avatarUrl": "http://example.com/new-avatar.jpg"
+}
+
+###
+
+### UC3: Manage Roles (Assign Role)
+POST {{Host}}/api/Auth/roles
+Content-Type: application/json
+
+{
+  "accountId": "{{AccountId}}",
+  "roleName": "Administrator"
+}
+
+###
+
+### UC10: Inactivate Account
+POST {{Host}}/api/Auth/inactivate
+Content-Type: application/json
+
+{
+  "accountId": "{{AccountId}}"
+}
+
+###
+
+### UC13: Update Account Credentials (Password)
+PUT {{Host}}/api/Auth/password
+Content-Type: application/json
+
+{
+  "accountId": "{{AccountId}}",
+  "currentPassword": "Password123!",
+  "newPassword": "NewSecurePassword123!"
+}
+
+###
+
+### UC11: Delete Account Completely
+DELETE {{Host}}/api/Auth/account/{{AccountId}}
+
+###
+
+### UC4: Create Post
+POST {{Host}}/api/Posts
+Content-Type: application/json
+
+{
+  "title": "My First Blog Post",
+  "slug": "my-first-blog-post",
+  "summary": "This is a summary of the first post.",
+  "content": "This is the content of the first post. It has some text here.",
+  "tags": "general, welcome",
+  "coverImage": "http://example.com/cover.jpg",
+  "authorId": "{{AccountId}}"
+}
+
+###
+
+### UC14: Change Post Author
+PUT {{Host}}/api/Posts/{{PostId}}/author
+Content-Type: application/json
+
+{
+  "newAuthorId": "4caef899-ee1b-4b13-a179-efca82c658cd"
+}
+
+###
+
+### UC5: Edit Post
+PUT {{Host}}/api/Posts/{{PostId}}
+Content-Type: application/json
+
+{
+  "title": "My Updated Blog Post",
+  "slug": "my-updated-blog-post",
+  "summary": "This is an updated summary of the first post.",
+  "content": "This is updated content of the first post.",
+  "tags": "general, update",
+  "coverImage": "http://example.com/new-cover.jpg"
+}
+
+###
+
+### UC12: Inactivate Post
+PUT {{Host}}/api/Posts/{{PostId}}/inactivate
+
+###
+
+### UC6: Delete Post
+DELETE {{Host}}/api/Posts/{{PostId}}
+
+###
+
+### UC7: Read Post by Slug
+GET {{Host}}/api/Posts/my-first-blog-post?isAdmin=true
+
+###
+
+### UC8: List/Filter/Paginate Posts
+GET {{Host}}/api/Posts?tag=general&searchTerm=first&page=1&pageSize=10&isAdmin=true

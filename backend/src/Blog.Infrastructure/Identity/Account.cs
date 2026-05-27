@@ -32,6 +32,6 @@ public class Account : IdentityUser<Guid>
 
     public void UpdateLockoutStatus(bool blocked)
     {
-        LockoutEnd = blocked ? DateTimeOffset.MaxValue : null;
+        LockoutEnd = blocked ? DateTimeOffset.UtcNow.AddYears(100) : null;
     }
 }

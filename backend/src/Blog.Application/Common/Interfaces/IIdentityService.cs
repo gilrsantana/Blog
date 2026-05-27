@@ -12,4 +12,5 @@ public interface IIdentityService
     Task<Result> UpdatePasswordAsync(Guid accountId, string currentPassword, string newPassword);
     Task<Result> DeleteAccountAsync(Guid accountId);
     Task<Result> InactivateAccountAsync(Guid accountId);
+    Task<Result> AssignRoleAsync(Guid accountId, string roleName);
 }
