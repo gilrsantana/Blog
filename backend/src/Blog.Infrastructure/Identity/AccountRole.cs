@@ -4,7 +4,7 @@ namespace Blog.Infrastructure.Identity;
 
 public class AccountRole : IdentityUserRole<Guid>
 {
-    private AccountRole()
+    public AccountRole()
     {
     }
 

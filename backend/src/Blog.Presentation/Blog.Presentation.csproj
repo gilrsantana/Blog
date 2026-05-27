@@ -6,11 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
     <ContainerRepository>blog-api</ContainerRepository>
+    <UserSecretsId>3caef899-ee1b-4b13-a179-efca82c658cd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
