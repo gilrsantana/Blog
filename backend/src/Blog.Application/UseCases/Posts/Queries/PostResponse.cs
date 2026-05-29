@@ -1,5 +1,3 @@
-using System;
-
 namespace Blog.Application.UseCases.Posts.Queries;
 
 public record PostResponse(

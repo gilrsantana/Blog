@@ -1,6 +1,4 @@
-using Xunit;
 using Blog.Domain.Entities;
-using Blog.Shared;
 
 namespace Blog.UnitTests.Domain;
 

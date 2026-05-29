@@ -4,6 +4,8 @@ using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Accounts.Commands;
 using Blog.Application.UseCases.Posts.Commands;
 using Blog.Application.UseCases.Posts.Queries;
+using Blog.Application.UseCases.Posts.Handlers;
+using Blog.Application.UseCases.Accounts.Handlers;
 
 namespace Blog.Application.Extensions;
 

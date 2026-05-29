@@ -1,10 +1,9 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Blog.Application.Common.CQRS;
 using Blog.Application.Common.Interfaces;
+using Blog.Application.UseCases.Posts.Queries;
 using Blog.Shared;
 
-namespace Blog.Application.UseCases.Posts.Queries;
+namespace Blog.Application.UseCases.Posts.Handlers;
 
 public class GetPostBySlugQueryHandler : IQueryHandler<GetPostBySlugQuery, PostResponse>
 {

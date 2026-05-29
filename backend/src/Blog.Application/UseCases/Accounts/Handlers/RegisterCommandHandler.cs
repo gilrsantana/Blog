@@ -1,12 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Blog.Application.Common.CQRS;
 using Blog.Application.Common.Interfaces;
+using Blog.Application.UseCases.Accounts.Commands;
 using Blog.Domain.Entities;
 using Blog.Shared;
 
-namespace Blog.Application.UseCases.Accounts.Commands;
+namespace Blog.Application.UseCases.Accounts.Handlers;
 
 public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 {

@@ -1,7 +1,5 @@
-using Xunit;
-using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Accounts.Commands;
-using Blog.Shared;
+using Blog.Application.UseCases.Accounts.Handlers;
 
 namespace Blog.UnitTests.Application;
 

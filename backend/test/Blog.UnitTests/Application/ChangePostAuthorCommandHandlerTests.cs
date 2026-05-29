@@ -1,8 +1,6 @@
-using Xunit;
-using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Posts.Commands;
 using Blog.Domain.Entities;
-using Blog.Shared;
+using Blog.Application.UseCases.Posts.Handlers;
 
 namespace Blog.UnitTests.Application;
 
@@ -24,7 +22,7 @@ public class ChangePostAuthorCommandHandlerTests
         // Arrange
         var oldAuthorId = Guid.NewGuid();
         var newAuthorId = Guid.NewGuid();
-        
+
         var post = Post.Create("Title", "slug", "Summary", "Content", "tags", "image", oldAuthorId).Value;
         await _postRepository.AddAsync(post);
 
@@ -82,7 +80,7 @@ public class ChangePostAuthorCommandHandlerTests
         // Arrange
         var oldAuthorId = Guid.NewGuid();
         var newAuthorId = Guid.NewGuid();
-        
+
         var post = Post.Create("Title", "slug", "Summary", "Content", "tags", "image", oldAuthorId).Value;
         await _postRepository.AddAsync(post);
 

@@ -1,9 +1,10 @@
 using Blog.Application.Common.CQRS;
 using Blog.Application.Common.Interfaces;
+using Blog.Application.UseCases.Posts.Commands;
 using Blog.Domain.Entities;
 using Blog.Shared;
 
-namespace Blog.Application.UseCases.Posts.Commands;
+namespace Blog.Application.UseCases.Posts.Handlers;
 
 public class CreatePostCommandHandler : ICommandHandler<CreatePostCommand, Guid>
 {

@@ -1,13 +1,7 @@
-using Xunit;
-using System;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Posts.Queries;
-using Blog.Application.UseCases.Accounts.Commands;
-using Blog.Application.UseCases.Posts.Commands;
 
 namespace Blog.IntegrationTests;
 
@@ -132,6 +126,62 @@ public class AuthAndPostIntegrationTests : IClassFixture<CustomWebApplicationFac
         Assert.Equal(HttpStatusCode.OK, inactivateRes.StatusCode);
 
         // 12. Delete Account Completely (UC11)
+        var deleteAccountRes = await _client.DeleteAsync($"/api/Auth/account/{accountId}");
+        Assert.Equal(HttpStatusCode.OK, deleteAccountRes.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginAndRefreshTokenFlow_ShouldSucceedAndRotateTokens()
+    {
+        // 1. Register Account
+        var uniqueEmail = $"refresh_test_{DateTime.UtcNow.Ticks}@blog.com";
+        var registerPayload = new
+        {
+            email = uniqueEmail,
+            password = "SecurePassword123!",
+            displayName = "Refresh Tester",
+            bio = "Created during refresh token testing",
+            avatarUrl = "http://example.com/avatar.png"
+        };
+
+        var registerRes = await _client.PostAsJsonAsync("/api/Auth/register", registerPayload);
+        Assert.Equal(HttpStatusCode.OK, registerRes.StatusCode);
+        var accountId = await registerRes.Content.ReadFromJsonAsync<Guid>();
+        Assert.NotEqual(Guid.Empty, accountId);
+
+        // 2. Login Account
+        var loginPayload = new
+        {
+            email = uniqueEmail,
+            password = "SecurePassword123!"
+        };
+        var loginRes = await _client.PostAsJsonAsync("/api/Auth/login", loginPayload);
+        Assert.Equal(HttpStatusCode.OK, loginRes.StatusCode);
+        var tokens1 = await loginRes.Content.ReadFromJsonAsync<TokenResponse>();
+        Assert.NotNull(tokens1);
+        Assert.NotEmpty(tokens1.AccessToken);
+        Assert.NotEmpty(tokens1.RefreshToken);
+
+        // 3. Refresh Token
+        var refreshPayload = new
+        {
+            accessToken = tokens1.AccessToken,
+            refreshToken = tokens1.RefreshToken
+        };
+        var refreshRes = await _client.PostAsJsonAsync("/api/Auth/refresh", refreshPayload);
+        Assert.Equal(HttpStatusCode.OK, refreshRes.StatusCode);
+        var tokens2 = await refreshRes.Content.ReadFromJsonAsync<TokenResponse>();
+        Assert.NotNull(tokens2);
+        Assert.NotEmpty(tokens2.AccessToken);
+        Assert.NotEmpty(tokens2.RefreshToken);
+        Assert.NotEqual(tokens1.AccessToken, tokens2.AccessToken);
+        Assert.NotEqual(tokens1.RefreshToken, tokens2.RefreshToken);
+
+        // 4. Try refreshing again with the old refresh token - should fail (rotation/revocation)
+        var replayRes = await _client.PostAsJsonAsync("/api/Auth/refresh", refreshPayload);
+        Assert.Equal(HttpStatusCode.Unauthorized, replayRes.StatusCode);
+
+        // 5. Clean up Account
         var deleteAccountRes = await _client.DeleteAsync($"/api/Auth/account/{accountId}");
         Assert.Equal(HttpStatusCode.OK, deleteAccountRes.StatusCode);
     }

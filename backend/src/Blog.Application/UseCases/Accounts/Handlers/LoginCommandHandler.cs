@@ -1,8 +1,9 @@
 using Blog.Application.Common.CQRS;
 using Blog.Application.Common.Interfaces;
+using Blog.Application.UseCases.Accounts.Commands;
 using Blog.Shared;
 
-namespace Blog.Application.UseCases.Accounts.Commands;
+namespace Blog.Application.UseCases.Accounts.Handlers;
 
 public class LoginCommandHandler : ICommandHandler<LoginCommand, TokenResponse>
 {

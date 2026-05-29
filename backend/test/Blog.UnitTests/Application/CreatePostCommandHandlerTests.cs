@@ -1,8 +1,6 @@
-using Xunit;
-using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Posts.Commands;
 using Blog.Domain.Entities;
-using Blog.Shared;
+using Blog.Application.UseCases.Posts.Handlers;
 
 namespace Blog.UnitTests.Application;
 

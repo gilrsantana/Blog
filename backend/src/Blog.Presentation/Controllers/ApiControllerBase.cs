@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Blog.Shared;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Presentation.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
@@ -37,7 +39,7 @@ public abstract class ApiControllerBase : ControllerBase
                 Title = "Unauthorized",
                 Detail = result.Error.Message
             }),
-            "Auth.InvalidToken" or "Token.Expired" => Unauthorized(new ProblemDetails
+            "Auth.InvalidToken" or "Token.Expired" or "Auth.InvalidRefreshToken" => Unauthorized(new ProblemDetails
             {
                 Status = StatusCodes.Status401Unauthorized,
                 Title = "Invalid Token",

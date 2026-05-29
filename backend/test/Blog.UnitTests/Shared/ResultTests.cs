@@ -1,4 +1,3 @@
-using Xunit;
 using Blog.Shared;
 
 namespace Blog.UnitTests.Shared;

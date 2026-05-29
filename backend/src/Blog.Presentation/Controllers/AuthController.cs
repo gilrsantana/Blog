@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Blog.Application.Common.CQRS;
 using Blog.Application.Common.Interfaces;
 using Blog.Application.UseCases.Accounts.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Presentation.Controllers;
 
@@ -36,6 +37,7 @@ public class AuthController : ApiControllerBase
         _updatePasswordHandler = updatePasswordHandler;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -82,6 +84,7 @@ public class AuthController : ApiControllerBase
         var result = await _assignRoleHandler.HandleAsync(command);
         return HandleResult(result);
     }
+
 
     [HttpPost("inactivate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
